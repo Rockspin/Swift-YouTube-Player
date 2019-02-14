@@ -22,12 +22,12 @@ class ViewController: UIViewController {
     }
 
     @IBAction func play(sender: UIButton) {
-        if playerView.ready {
-            if playerView.playerState != YouTubePlayerState.Playing {
-                playerView.play()
+        if playerView.isReady {
+            if playerView.playerState != .playing {
+                playerView.playVideo()
                 playButton.setTitle("Pause", for: .normal)
             } else {
-                playerView.pause()
+                playerView.pauseVideo()
                 playButton.setTitle("Play", for: .normal)
             }
         }
@@ -42,12 +42,11 @@ class ViewController: UIViewController {
     }
 
     @IBAction func loadVideo(sender: UIButton) {
-        playerView.playerVars = [
-            "playsinline": "1",
-            "controls": "0",
-            "showinfo": "0"
-            ] as YouTubePlayerView.YouTubePlayerParameters
-        playerView.loadVideoID("wQg3bXrVLtg")
+        playerView.playerParams.playsInline = true
+        playerView.playerParams.showControls = true
+        playerView.playerParams.showInfo = false
+
+        playerView.loadVideoID("YbJOTdZBX1g")
     }
 
     @IBAction func loadPlaylist(sender: UIButton) {
@@ -55,13 +54,17 @@ class ViewController: UIViewController {
     }
     
     @IBAction func currentTime(sender: UIButton) {
-        let title = String(format: "Current Time %@", playerView.getCurrentTime() ?? "0")
-        currentTimeButton.setTitle(title, for: .normal)
+        playerView.getCurrentTime { seconds in
+            let title = "Current Time \(seconds)"
+            self.currentTimeButton.setTitle(title, for: .normal)
+        }
     }
     
     @IBAction func duration(sender: UIButton) {
-        let title = String(format: "Duration %@", playerView.getDuration() ?? "0")
-        durationButton.setTitle(title, for: .normal)
+        playerView.getDuration { seconds in
+            let title = "Current Time \(seconds)"
+            self.durationButton.setTitle(title, for: .normal)
+        }
     }
 
     func showAlert(message: String) {
